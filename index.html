@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notificação Extrajudicial | SuporteADV</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0d0d0d; color: #e0e0e0; padding: 24px 16px; }
+  .container { max-width: 760px; margin: 0 auto; }
+
+  .header { text-align: center; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid #222; }
+  h1 { font-size: 1.5rem; color: #008080; margin-bottom: 6px; }
+  .subtitle { font-size: 0.88rem; color: #888; line-height: 1.5; }
+  .brand { font-size: 0.78rem; margin-top: 8px; color: #555; }
+  .brand span.s { color: #8B00FF; font-weight: 700; }
+  .brand span.a { color: #008080; font-weight: 700; }
+
+  .card { background: #111; border-radius: 10px; border: 1px solid #222; border-left: 3px solid #8B00FF; padding: 20px 22px; margin-bottom: 14px; }
+  .card-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #008080; font-weight: 700; margin-bottom: 16px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
+  .field.full { grid-column: 1 / -1; }
+  .field label { display: block; font-size: 0.78rem; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 9px 11px; border: 1.5px solid #333; border-radius: 6px;
+    font-size: 0.92rem; color: #fff; background: #1a1a1a; transition: border-color 0.2s; resize: vertical;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #008080; box-shadow: 0 0 0 2px rgba(0,128,128,0.2); }
+  .field select option { background: #1a1a1a; }
+
+  .info-box { background: #0d1a1a; border: 1px solid #1a3a3a; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.82rem; color: #666; line-height: 1.6; }
+  .info-box b { color: #008080; }
+
+  button.gerar { background: #008080; color: #fff; border: none; padding: 10px 26px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.07em; cursor: pointer; transition: background 0.18s; text-transform: uppercase; margin-right: 10px; }
+  button.gerar:hover { background: #006666; box-shadow: 0 0 10px rgba(0,128,128,0.4); }
+  button.copiar { background: #1a1a1a; border: 1.5px solid #333; color: #888; padding: 10px 18px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+  button.copiar:hover { border-color: #008080; color: #008080; }
+  button.imprimir { background: #8B00FF; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+
+  /* Documento */
+  .doc-wrap { margin-top: 14px; display: none; }
+  .doc-wrap.visible { display: block; }
+  .doc-titulo { font-size: 0.75rem; text-transform: uppercase; color: #008080; font-weight: 700; margin-bottom: 12px; }
+
+  .doc-box {
+    background: #fff; color: #1a1a1a; border-radius: 8px; overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+  .doc-header {
+    background: #1a1a2e; color: #fff; padding: 16px 28px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .dh-escritorio { font-size: 0.95rem; font-weight: 700; }
+  .dh-sub { font-size: 0.72rem; color: #aaa; margin-top: 2px; }
+  .dh-num { text-align: right; font-size: 0.75rem; color: #aaa; }
+  .dh-num span { display: block; font-size: 1rem; font-weight: 700; color: #00ff00; }
+
+  .doc-body { padding: 32px 36px; font-size: 0.9rem; line-height: 1.9; color: #1a1a1a; }
+  @media (max-width: 520px) { .doc-body { padding: 18px 16px; } }
+
+  .db-titulo { text-align: center; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #1a1a2e; margin-bottom: 6px; }
+  .db-subtitulo { text-align: center; font-size: 0.82rem; color: #555; margin-bottom: 24px; font-style: italic; }
+
+  .db-destino { background: #f5f5f5; border-left: 4px solid #1a1a2e; padding: 10px 14px; margin-bottom: 20px; font-size: 0.88rem; }
+  .db-destino b { color: #1a1a2e; }
+
+  .db-texto { text-align: justify; margin-bottom: 24px; }
+  .db-texto p { margin-bottom: 12px; }
+
+  .db-prazo { background: #fff3cd; border: 1px solid #ffc107; border-radius: 5px; padding: 10px 14px; margin-bottom: 20px; font-size: 0.88rem; color: #856404; }
+  .db-prazo b { color: #533f03; }
+
+  .db-advertencia { background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; padding: 10px 14px; margin-bottom: 24px; font-size: 0.85rem; color: #721c24; }
+
+  .db-footer { border-top: 1px solid #ddd; padding-top: 20px; }
+  .df-local { font-size: 0.82rem; color: #555; margin-bottom: 16px; }
+  .df-assinatura { display: flex; gap: 40px; flex-wrap: wrap; }
+  .df-ass-item { text-align: center; }
+  .df-linha { width: 200px; border-top: 1px solid #333; margin-bottom: 4px; }
+  .df-nome { font-size: 0.82rem; font-weight: 700; color: #1a1a1a; }
+  .df-sub { font-size: 0.72rem; color: #555; }
+
+  .acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .erro { background: #1a0a0a; border: 1px solid #4a1a1a; border-radius: 8px; padding: 14px 16px; color: #ff6666; font-size: 0.88rem; margin-top: 14px; display: none; }
+  .erro.visible { display: block; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .card, .header, .acoes, .doc-titulo, .erro { display: none !important; }
+    .doc-wrap { display: block !important; }
+    .doc-header { background: #1a1a2e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>Notificação Extrajudicial</h1>
+    <p class="subtitle">Gere notificações extrajudiciais profissionais para cobrança, rescisão, interpelação e outras finalidades.</p>
+    <p class="brand"><span class="s">suporte</span><span class="a">ADV</span>.br — Ferramentas para Advogados</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Tipo de Notificação</div>
+    <div class="form-grid">
+      <div class="field full">
+        <label>Finalidade</label>
+        <select id="tipoNotif" onchange="atualizarTipo()">
+          <option value="cobranca">Cobrança de dívida / débito</option>
+          <option value="rescisao_contrato">Rescisão de contrato</option>
+          <option value="devolucao_imovel">Devolução de imóvel (locação)</option>
+          <option value="cessacao_ato">Cessação de ato ilícito / perturbação</option>
+          <option value="cumprimento_obrigacao">Cumprimento de obrigação contratual</option>
+          <option value="danos">Reparação de danos</option>
+          <option value="trabalhista">Interpelação trabalhista</option>
+          <option value="outro">Outra finalidade</option>
+        </select>
+      </div>
+    </div>
+    <div class="info-box" id="info-tipo">—</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Remetente (quem envia)</div>
+    <div class="form-grid">
+      <div class="field full"><label>Nome do advogado / escritório</label>
+        <input type="text" id="advNome" placeholder="Ex: Silva & Associados Advogados">
+      </div>
+      <div class="field"><label>OAB</label>
+        <input type="text" id="advOAB" placeholder="Ex: 12345/BA">
+      </div>
+      <div class="field"><label>Endereço / Cidade</label>
+        <input type="text" id="advEnd" placeholder="Ex: Salvador/BA">
+      </div>
+      <div class="field"><label>Telefone</label>
+        <input type="text" id="advTel" placeholder="(71) 99999-9999">
+      </div>
+      <div class="field full"><label>Nome do cliente (notificante)</label>
+        <input type="text" id="cliNome" placeholder="Nome completo do cliente que envia a notificação">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Destinatário (notificado)</div>
+    <div class="form-grid">
+      <div class="field full"><label>Nome completo / Razão social</label>
+        <input type="text" id="destNome" placeholder="Nome de quem receberá a notificação">
+      </div>
+      <div class="field"><label>CPF / CNPJ</label>
+        <input type="text" id="destCPF" placeholder="000.000.000-00">
+      </div>
+      <div class="field full"><label>Endereço para entrega</label>
+        <input type="text" id="destEnd" placeholder="Endereço completo para envio pelo Correio / AR">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Conteúdo da Notificação</div>
+    <div class="form-grid">
+      <div class="field full"><label>Fatos e fundamentos</label>
+        <textarea id="fatos" rows="4" placeholder="Descreva os fatos que fundamentam a notificação. Ex: Em [data], as partes celebraram contrato de locação do imóvel situado na Rua X. Desde [data], o notificado encontra-se inadimplente com o pagamento dos aluguéis mensais..."></textarea>
+      </div>
+      <div class="field full"><label>O que está sendo exigido / requerido</label>
+        <textarea id="exigencia" rows="3" placeholder="Ex: Pagamento integral do débito no valor de R$ X.XXX,00, composto por X parcelas em atraso..."></textarea>
+      </div>
+      <div class="field"><label>Prazo para cumprimento</label>
+        <select id="prazo">
+          <option value="48h">48 horas</option>
+          <option value="72h">72 horas</option>
+          <option value="5dias">5 dias úteis</option>
+          <option value="10dias" selected>10 dias</option>
+          <option value="15dias">15 dias</option>
+          <option value="30dias">30 dias</option>
+          <option value="custom">Prazo personalizado</option>
+        </select>
+      </div>
+      <div class="field" id="wrap-prazo-custom" style="display:none">
+        <label>Prazo personalizado</label>
+        <input type="text" id="prazoCustom" placeholder="Ex: 7 dias úteis a contar do recebimento">
+      </div>
+      <div class="field"><label>Valor do débito (R$) — opcional</label>
+        <input type="number" id="valorDebito" placeholder="0,00" step="0.01" min="0">
+      </div>
+      <div class="field"><label>Consequência do não cumprimento</label>
+        <select id="consequencia">
+          <option value="judicial">Medidas judiciais cabíveis</option>
+          <option value="acao_cobranca">Ação de cobrança / monitória</option>
+          <option value="despejo">Ação de despejo</option>
+          <option value="danos">Ação de indenização por danos</option>
+          <option value="criminal">Representação criminal</option>
+          <option value="protesto">Protesto do título</option>
+        </select>
+      </div>
+      <div class="field"><label>Forma de envio</label>
+        <select id="envio">
+          <option value="AR">Correios — AR (Aviso de Recebimento)</option>
+          <option value="cartorio">Cartório de Registro de Títulos</option>
+          <option value="email">E-mail com confirmação de leitura</option>
+          <option value="whatsapp">WhatsApp (mensagem + print)</option>
+          <option value="pessoal">Entrega pessoal com recibo</option>
+        </select>
+      </div>
+      <div class="field"><label>Nº da notificação</label>
+        <input type="text" id="numNotif" placeholder="Ex: 001/2025">
+      </div>
+      <div class="field"><label>Data</label>
+        <input type="date" id="dataNotif">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="gerar" onclick="gerar()">GERAR NOTIFICAÇÃO</button>
+    </div>
+  </div>
+
+  <div class="erro" id="erro"></div>
+
+  <div class="doc-wrap" id="doc-wrap">
+    <div class="doc-titulo">📄 Notificação gerada</div>
+    <div class="doc-box" id="doc-box"></div>
+    <div class="acoes">
+      <button class="copiar" onclick="copiar()">📋 Copiar texto</button>
+      <button class="imprimir" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const infoTipos = {
+  cobranca: '<b>Cobrança:</b> Notificação para pagamento de débito antes de ajuizamento. Interrompe a prescrição (CC, art. 202, V) e demonstra boa-fé do credor.',
+  rescisao_contrato: '<b>Rescisão contratual:</b> Comunica formalmente a rescisão do contrato e seus efeitos, fixando prazo para regularização ou encerramento.',
+  devolucao_imovel: '<b>Devolução de imóvel:</b> Notifica o locatário/ocupante a desocupar o imóvel no prazo, como etapa prévia à ação de despejo.',
+  cessacao_ato: '<b>Cessação de ato ilícito:</b> Exige que o notificado cesse conduta ilícita, perturbação, concorrência desleal ou violação de direitos.',
+  cumprimento_obrigacao: '<b>Cumprimento de obrigação:</b> Interpela o devedor para cumprir obrigação contratual de fazer, não fazer ou entregar.',
+  danos: '<b>Reparação de danos:</b> Notifica o responsável a reparar danos materiais ou morais antes da propositura de ação judicial.',
+  trabalhista: '<b>Interpelação trabalhista:</b> Notifica empregador/empregado sobre descumprimento de obrigações trabalhistas.',
+  outro: '<b>Outra finalidade:</b> Notificação extrajudicial para fins específicos não listados acima.',
+};
+
+function atualizarTipo() {
+  const tipo = document.getElementById('tipoNotif').value;
+  document.getElementById('info-tipo').innerHTML = infoTipos[tipo] || '';
+}
+
+document.getElementById('prazo').addEventListener('change', function() {
+  document.getElementById('wrap-prazo-custom').style.display = this.value === 'custom' ? '' : 'none';
+});
+
+function fmtMoeda(v) {
+  if (!v || isNaN(v)) return '';
+  return 'R$ ' + parseFloat(v).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
+function fmtData(d) {
+  if (!d) return new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+  return new Date(d+'T12:00:00').toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+}
+function v(id) { return (document.getElementById(id)?.value || '').trim(); }
+
+function showErro(msg) {
+  document.getElementById('erro').textContent = msg;
+  document.getElementById('erro').classList.add('visible');
+}
+function hideErro() { document.getElementById('erro').classList.remove('visible'); }
+
+function gerar() {
+  hideErro();
+  const advNome = v('advNome'); const cliNome = v('cliNome'); const destNome = v('destNome');
+  if (!advNome) return showErro('Informe o nome do advogado/escritório.');
+  if (!cliNome) return showErro('Informe o nome do cliente (notificante).');
+  if (!destNome) return showErro('Informe o nome do destinatário.');
+
+  const tipoNotif = document.getElementById('tipoNotif').value;
+  const advOAB = v('advOAB'); const advEnd = v('advEnd'); const advTel = v('advTel');
+  const destCPF = v('destCPF'); const destEnd = v('destEnd');
+  const fatos = v('fatos') || '[Descreva os fatos]';
+  const exigencia = v('exigencia') || '[Descreva a exigência]';
+  const prazoSel = document.getElementById('prazo').value;
+  const prazoTxt = prazoSel === 'custom' ? v('prazoCustom') : { '48h':'48 (quarenta e oito) horas', '72h':'72 (setenta e duas) horas', '5dias':'5 (cinco) dias úteis', '10dias':'10 (dez) dias', '15dias':'15 (quinze) dias', '30dias':'30 (trinta) dias' }[prazoSel];
+  const valorDebito = v('valorDebito');
+  const consequenciaSel = document.getElementById('consequencia').value;
+  const consequenciaTxt = { judicial:'as medidas judiciais cabíveis', acao_cobranca:'o ajuizamento de ação de cobrança/monitória', despejo:'o ajuizamento de ação de despejo', danos:'o ajuizamento de ação de indenização por danos materiais e morais', criminal:'a representação criminal pelos fatos', protesto:'o protesto do título em cartório competente' }[consequenciaSel];
+  const envioSel = document.getElementById('envio').value;
+  const envioTxt = { AR:'Correios com Aviso de Recebimento (AR)', cartorio:'Cartório de Registro de Títulos e Documentos', email:'E-mail com confirmação de leitura', whatsapp:'WhatsApp com confirmação de recebimento', pessoal:'entrega pessoal mediante recibo' }[envioSel];
+  const numNotif = v('numNotif') || `001/${new Date().getFullYear()}`;
+  const dataNotif = v('dataNotif');
+  const nomeTipos = { cobranca:'COBRANÇA DE DÉBITO', rescisao_contrato:'RESCISÃO CONTRATUAL', devolucao_imovel:'DEVOLUÇÃO DE IMÓVEL', cessacao_ato:'CESSAÇÃO DE ATO ILÍCITO', cumprimento_obrigacao:'CUMPRIMENTO DE OBRIGAÇÃO', danos:'REPARAÇÃO DE DANOS', trabalhista:'INTERPELAÇÃO TRABALHISTA', outro:'NOTIFICAÇÃO EXTRAJUDICIAL' }[tipoNotif];
+
+  const valorBloco = valorDebito && parseFloat(valorDebito) > 0
+    ? `\n\nO valor total do débito é de ${fmtMoeda(parseFloat(valorDebito))}, acrescido de juros, multa e correção monetária na forma do contrato ou da lei.`
+    : '';
+
+  const html = `
+    <div class="doc-header">
+      <div>
+        <div class="dh-escritorio">${advNome}</div>
+        <div class="dh-sub">OAB: ${advOAB || '—'} | ${advEnd || ''} | ${advTel || ''}</div>
+      </div>
+      <div class="dh-num">
+        Notificação nº <span>${numNotif}</span>
+        ${fmtData(dataNotif)}
+      </div>
+    </div>
+    <div class="doc-body">
+      <div class="db-titulo">Notificação Extrajudicial</div>
+      <div class="db-subtitulo">${nomeTipos}</div>
+
+      <div class="db-destino">
+        <b>Ao(À) Sr./Sra.:</b> ${destNome.toUpperCase()}<br>
+        ${destCPF ? `<b>CPF/CNPJ:</b> ${destCPF}<br>` : ''}
+        ${destEnd ? `<b>Endereço:</b> ${destEnd}` : ''}
+      </div>
+
+      <div class="db-texto">
+        <p>${cliNome.toUpperCase()}, por seu advogado subscrito, vem, respeitosamente, notificar Vossa Senhoria, pelos fatos e fundamentos a seguir expostos:</p>
+
+        <p><b>I — DOS FATOS</b></p>
+        <p>${fatos.replace(/\n/g, '</p><p>')}</p>
+
+        <p><b>II — DO DIREITO E DA EXIGÊNCIA</b></p>
+        <p>${exigencia.replace(/\n/g, '</p><p>')}${valorBloco}</p>
+      </div>
+
+      <div class="db-prazo">
+        <b>⏰ PRAZO PARA CUMPRIMENTO:</b> Fica Vossa Senhoria NOTIFICADO(A) a cumprir o acima exposto no prazo de <b>${prazoTxt}</b>, a contar do recebimento da presente notificação, enviada por ${envioTxt}.
+      </div>
+
+      <div class="db-advertencia">
+        ⚠️ <b>ADVERTÊNCIA:</b> O descumprimento da presente notificação no prazo estipulado implicará ${consequenciaTxt}, com todas as consequências legais, incluindo responsabilidade pelo pagamento das custas processuais e honorários advocatícios.
+      </div>
+
+      <div class="db-footer">
+        <div class="df-local">${advEnd || '_______________'}, ${fmtData(dataNotif)}</div>
+        <div class="df-assinatura">
+          <div class="df-ass-item">
+            <div class="df-linha"></div>
+            <div class="df-nome">${advNome}</div>
+            <div class="df-sub">OAB nº ${advOAB || '___'}</div>
+            <div class="df-sub">Advogado(a) do Notificante</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('doc-box').innerHTML = html;
+  document.getElementById('doc-wrap').classList.add('visible');
+  document.getElementById('doc-wrap').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copiar() {
+  const txt = document.getElementById('doc-box').innerText;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.querySelector('button.copiar');
+    btn.textContent = '✅ Copiado!';
+    setTimeout(() => btn.textContent = '📋 Copiar texto', 2000);
+  });
+}
+
+// Init
+atualizarTipo();
+document.getElementById('dataNotif').value = new Date().toISOString().split('T')[0];
+document.getElementById('numNotif').value = `001/${new Date().getFullYear()}`;
+</script>
+</body>
+</html>
